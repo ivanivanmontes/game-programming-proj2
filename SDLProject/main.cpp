@@ -62,7 +62,18 @@ glm::mat4 g_view_matrix,
 float g_previous_ticks = 0.0f;
 float g_triangle_x = 0.0f;
 float g_triangle_y = 0.0f;
-float g_triangle_rotate = 0.0f;
+
+// Start at 0, 0, 0
+glm::vec3 g_paddle_position = glm::vec3(-3.0f, 0, 0);
+
+// Don't go anywhere (yet)
+glm::vec3 g_paddle_movement = glm::vec3(0, 0, 0);
+
+// Start at 0, 0, 0
+glm::vec3 g_paddle2_position = glm::vec3(3.0f, 0, 0);
+
+// Don't go anywhere (yet)
+glm::vec3 g_paddle2_movement = glm::vec3(0, 0, 0);
 
 
 GLuint g_green_guy_texture_id,
@@ -153,11 +164,27 @@ void initialise()
 void process_input()
 {
     SDL_Event event;
+    const Uint8 *key_state = SDL_GetKeyboardState(NULL); // if non-NULL, receives the length of the returned array
     while (SDL_PollEvent(&event))
     {
         if (event.type == SDL_QUIT || event.type == SDL_WINDOWEVENT_CLOSE)
         {
             g_app_status = TERMINATED;
+        }
+        else if (key_state[SDL_SCANCODE_W]) {
+            g_paddle_movement.y = 1.0f;
+        }
+        
+        else if (key_state[SDL_SCANCODE_S]) {
+            g_paddle_movement.y = -1.0f;
+        }
+        
+        else if (key_state[SDL_SCANCODE_UP]) {
+            g_paddle2_movement.y = 1.0f;
+        }
+        
+        else if (key_state[SDL_SCANCODE_DOWN]) {
+            g_paddle2_movement.y = -1.0f;
         }
     }
 }
@@ -171,13 +198,18 @@ void update()
 
     g_triangle_x += -0.5f * delta_time;
     g_triangle_y += 0.5f * delta_time;
-    g_triangle_rotate += DEGREES_PER_SECOND * delta_time;
+    
+    g_paddle_position += g_paddle_movement * 1.0f * delta_time;
+    g_paddle2_position += g_paddle2_movement * 1.0f * delta_time;
 
-//    g_model_matrix1 = glm::mat4(1.0f);
+    g_model_matrix1 = glm::mat4(1.0f);
     g_model_matrix2 = glm::mat4(1.0f);
-    g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(3.0f, 0.0f, 0.0f));
+    
+    g_model_matrix1 = glm::translate(g_model_matrix1, g_paddle_position);
+    g_model_matrix2 = glm::translate(g_model_matrix2, g_paddle2_position);
+    
 
-    g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(0.0f, g_triangle_y, 0.0f));
+//    g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(0.0f, g_triangle_y, 0.0f));
 }
 
 void draw_object(glm::mat4 &object_g_model_matrix, GLuint &object_texture_id)
