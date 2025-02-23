@@ -49,7 +49,7 @@ TEXTURE_BORDER     = 0;
 
 constexpr char GREEN_GUY_SPRITE[] = "rui.png",
 PINK_GIRL_SPRITE[] = "totsuko.png",
-BALL_SPRITE[] = "rui.png";
+BALL_SPRITE[] = "ball.png";
 
 SDL_Window* g_display_window;
 AppStatus g_app_status = RUNNING;
@@ -63,7 +63,6 @@ g_projection_matrix;
 
 float g_previous_ticks = 0.0f;
 float g_triangle_x = 0.0f;
-float g_triangle_y = 0.0f;
 
 bool is_one_player = false;
 
@@ -83,6 +82,8 @@ glm::vec3 g_paddle2_position = glm::vec3(3.0f, 0, 0);
 
 // Don't go anywhere (yet)
 glm::vec3 g_paddle2_movement = glm::vec3(0, 0, 0);
+
+constexpr glm::vec3 INIT_SCALE_BALL = glm::vec3(0.5f, 0.5f, 0.0f);
 
 
 GLuint g_green_guy_texture_id,
@@ -152,6 +153,9 @@ void initialise()
     
     g_model_matrix2 = glm::mat4(1.0f);
     g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(3.0f, 0.0f, 0.0f));
+    
+    g_model_matrix3 = glm::mat4(1.0f);
+    g_model_matrix3 = glm::translate(g_model_matrix1, glm::vec3(0.0f, 0.0f, 0.0f));
     
     g_view_matrix       = glm::mat4(1.0f);
     g_projection_matrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
@@ -257,16 +261,20 @@ void process_input()
         float delta_time = ticks - g_previous_ticks;
         g_previous_ticks = ticks;
         
-        //    g_triangle_x += -5.5f * delta_time;
-        g_triangle_y += 0.5f * delta_time;
+        g_triangle_x += 1.5f * delta_time;
         
         g_paddle_position += g_paddle_movement * 8.0f * delta_time;
         g_paddle2_position += g_paddle2_movement * 8.0f * delta_time;
         
         g_model_matrix1 = glm::mat4(1.0f);
         g_model_matrix2 = glm::mat4(1.0f);
+        g_model_matrix3 = glm::mat4(1.0f);
         
         g_model_matrix1 = glm::translate(g_model_matrix1, g_paddle_position);
+        
+        g_model_matrix3  = glm::scale(g_model_matrix3, INIT_SCALE_BALL);
+        
+        g_model_matrix3 = glm::translate(g_model_matrix3, glm::vec3(-g_triangle_x, 0.0f, 0.0f));
         
         if (!is_one_player) { /// if we are two players
             g_model_matrix2 = glm::translate(g_model_matrix2, g_paddle2_position);

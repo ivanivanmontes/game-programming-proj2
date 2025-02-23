@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6D504F602D6BCF1500D9FF01 /* totsuko.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D504F5E2D6BCF1500D9FF01 /* totsuko.png */; };
 		6D504F612D6BCF1500D9FF01 /* rui.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D504F5F2D6BCF1500D9FF01 /* rui.png */; };
+		6D504F632D6BEA1C00D9FF01 /* ball.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D504F622D6BEA1C00D9FF01 /* ball.png */; };
 		DBDF1B532323DE3F007CECB1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBDF1B522323DE3F007CECB1 /* main.cpp */; };
 		DBDF1B5E2323DE8D007CECB1 /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBDF1B5D2323DE8D007CECB1 /* ShaderProgram.cpp */; };
 		DBDF1B612323DE9E007CECB1 /* shaders in CopyFiles */ = {isa = PBXBuildFile; fileRef = DBDF1B5C2323DE8D007CECB1 /* shaders */; };
@@ -26,6 +27,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				6D504F632D6BEA1C00D9FF01 /* ball.png in CopyFiles */,
 				6D504F602D6BCF1500D9FF01 /* totsuko.png in CopyFiles */,
 				6D504F612D6BCF1500D9FF01 /* rui.png in CopyFiles */,
 				DBDF1B612323DE9E007CECB1 /* shaders in CopyFiles */,
@@ -37,6 +39,7 @@
 /* Begin PBXFileReference section */
 		6D504F5E2D6BCF1500D9FF01 /* totsuko.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = totsuko.png; sourceTree = "<group>"; };
 		6D504F5F2D6BCF1500D9FF01 /* rui.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rui.png; sourceTree = "<group>"; };
+		6D504F622D6BEA1C00D9FF01 /* ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ball.png; sourceTree = "<group>"; };
 		DBDF1B4F2323DE3F007CECB1 /* SDLProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SDLProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBDF1B522323DE3F007CECB1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		DBDF1B592323DE8D007CECB1 /* ShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProgram.h; sourceTree = "<group>"; };
@@ -70,6 +73,7 @@
 		DBDF1B462323DE3F007CECB1 = {
 			isa = PBXGroup;
 			children = (
+				6D504F622D6BEA1C00D9FF01 /* ball.png */,
 				6D504F5F2D6BCF1500D9FF01 /* rui.png */,
 				6D504F5E2D6BCF1500D9FF01 /* totsuko.png */,
 				DBDF1B512323DE3F007CECB1 /* SDLProject */,
