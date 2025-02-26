@@ -1,12 +1,12 @@
 /**
- * Author: Ivan Reynoso Montes
- * Assignment: Simple 2D Scene
- * Date due: 2025-02-15, 11:59pm
- * I pledge that I have completed this assignment without
- * collaborating with anyone else, in conformance with the
- * NYU School of Engineering Policies and Procedures on
- * Academic Misconduct.
- **/
+* Author: Ivan Reynoso Montes
+* Assignment: Pong Clone
+* Date due: 2025-3-01, 11:59pm
+* I pledge that I have completed this assignment without
+* collaborating with anyone else, in conformance with the
+* NYU School of Engineering Policies and Procedures on
+* Academic Misconduct.
+**/
 #define GL_SILENCE_DEPRECATION
 #define STB_IMAGE_IMPLEMENTATION
 #define LOG(argument) std::cout << argument << '\n'
@@ -66,8 +66,7 @@ float g_triangle_x = 0.0f;
 
 bool is_one_player = false;
 
-constexpr glm::vec3 INIT_POS_PADDLE  = glm::vec3(3.0f, 0.0f, 0.0f),
-INIT_POS_PADDLE2   = glm::vec3(-3.0f, 0.0f, 0.0f);
+
 
 
 
@@ -83,7 +82,11 @@ glm::vec3 g_paddle2_position = glm::vec3(3.0f, 0, 0);
 // Don't go anywhere (yet)
 glm::vec3 g_paddle2_movement = glm::vec3(0, 0, 0);
 
-constexpr glm::vec3 INIT_SCALE_BALL = glm::vec3(0.5f, 0.5f, 0.0f);
+constexpr glm::vec3 INIT_SCALE_BALL = glm::vec3(0.5f, 0.5f, 0.0f),
+INIT_POS_BALL = glm::vec3(0.0f, 0.0f, 0.0f),
+INIT_POS_PADDLE  = glm::vec3(3.0f, 0.0f, 0.0f),
+INIT_POS_PADDLE2   = glm::vec3(-3.0f, 0.0f, 0.0f);
+
 
 
 GLuint g_green_guy_texture_id,
@@ -255,102 +258,102 @@ void process_input()
     
 }
     
-    void update()
-    {
-        float ticks = (float) SDL_GetTicks() / MILLISECONDS_IN_SECOND;
-        float delta_time = ticks - g_previous_ticks;
-        g_previous_ticks = ticks;
-        
-        g_triangle_x += 1.5f * delta_time;
-        
-        g_paddle_position += g_paddle_movement * 8.0f * delta_time;
-        g_paddle2_position += g_paddle2_movement * 8.0f * delta_time;
-        
-        g_model_matrix1 = glm::mat4(1.0f);
-        g_model_matrix2 = glm::mat4(1.0f);
-        g_model_matrix3 = glm::mat4(1.0f);
-        
-        g_model_matrix1 = glm::translate(g_model_matrix1, g_paddle_position);
-        
-        g_model_matrix3  = glm::scale(g_model_matrix3, INIT_SCALE_BALL);
-        
-        g_model_matrix3 = glm::translate(g_model_matrix3, glm::vec3(-g_triangle_x, 0.0f, 0.0f));
-        
-        if (!is_one_player) { /// if we are two players
-            g_model_matrix2 = glm::translate(g_model_matrix2, g_paddle2_position);
-        }
-        else { /// if we are just one player
-            g_paddle2_position.y +=  2.0f * delta_time;
-            g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position.x, g_paddle2_position.y, 0.0f));
-            
-        }
-        
-        
-        
-        
-    }
+void update()
+{
+    float ticks = (float) SDL_GetTicks() / MILLISECONDS_IN_SECOND;
+    float delta_time = ticks - g_previous_ticks;
+    g_previous_ticks = ticks;
     
-    void draw_object(glm::mat4 &object_g_model_matrix, GLuint &object_texture_id)
-    {
-        g_shader_program.set_model_matrix(object_g_model_matrix);
-        glBindTexture(GL_TEXTURE_2D, object_texture_id);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+    g_triangle_x += 1.5f * delta_time;
+    
+    g_paddle_position += g_paddle_movement * 8.0f * delta_time;
+    g_paddle2_position += g_paddle2_movement * 8.0f * delta_time;
+    
+    g_model_matrix1 = glm::mat4(1.0f);
+    g_model_matrix2 = glm::mat4(1.0f);
+    g_model_matrix3 = glm::mat4(1.0f);
+    
+    g_model_matrix1 = glm::translate(g_model_matrix1, g_paddle_position);
+    
+    g_model_matrix3  = glm::scale(g_model_matrix3, INIT_SCALE_BALL);
+    
+    g_model_matrix3 = glm::translate(g_model_matrix3, glm::vec3(-g_triangle_x, 0.0f, 0.0f));
+    
+    if (!is_one_player) { /// if we are two players
+        g_model_matrix2 = glm::translate(g_model_matrix2, g_paddle2_position);
+    }
+    else { /// if we are just one player
+        g_paddle2_position.y +=  2.0f * delta_time;
+        g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position.x, g_paddle2_position.y, 0.0f));
+        
     }
     
     
     
     
-    void render()
+}
+    
+void draw_object(glm::mat4 &object_g_model_matrix, GLuint &object_texture_id)
+{
+    g_shader_program.set_model_matrix(object_g_model_matrix);
+    glBindTexture(GL_TEXTURE_2D, object_texture_id);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+    
+    
+    
+    
+void render()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    float vertices[] =
     {
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        float vertices[] =
-        {
-            -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f,
-            -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
-            -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f,
-        };
-        
-        float texture_coordinates[] =
-        {
-            0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-        };
-        
-        
-        glVertexAttribPointer(g_shader_program.get_position_attribute(), 2, GL_FLOAT, false,
-                              0, vertices);
-        glEnableVertexAttribArray(g_shader_program.get_position_attribute());
-        
-        glVertexAttribPointer(g_shader_program.get_tex_coordinate_attribute(), 2, GL_FLOAT,
-                              false, 0, texture_coordinates);
-        glEnableVertexAttribArray(g_shader_program.get_tex_coordinate_attribute());
-        
-        draw_object(g_model_matrix1, g_green_guy_texture_id);
-        draw_object(g_model_matrix2, g_pink_girl_texture_id);
-        draw_object(g_model_matrix3, g_ball_texture_id);
-        
-        glDisableVertexAttribArray(g_shader_program.get_position_attribute());
-        glDisableVertexAttribArray(g_shader_program.get_tex_coordinate_attribute());
-        
-        SDL_GL_SwapWindow(g_display_window);
+        -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f,
+        -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
+        -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f,
+    };
+    
+    float texture_coordinates[] =
+    {
+        0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+    };
+    
+    
+    glVertexAttribPointer(g_shader_program.get_position_attribute(), 2, GL_FLOAT, false,
+                          0, vertices);
+    glEnableVertexAttribArray(g_shader_program.get_position_attribute());
+    
+    glVertexAttribPointer(g_shader_program.get_tex_coordinate_attribute(), 2, GL_FLOAT,
+                          false, 0, texture_coordinates);
+    glEnableVertexAttribArray(g_shader_program.get_tex_coordinate_attribute());
+    
+    draw_object(g_model_matrix1, g_green_guy_texture_id);
+    draw_object(g_model_matrix2, g_pink_girl_texture_id);
+    draw_object(g_model_matrix3, g_ball_texture_id);
+    
+    glDisableVertexAttribArray(g_shader_program.get_position_attribute());
+    glDisableVertexAttribArray(g_shader_program.get_tex_coordinate_attribute());
+    
+    SDL_GL_SwapWindow(g_display_window);
+}
+    
+void shutdown() { SDL_Quit(); }
+    
+    
+int main(int argc, char* argv[])
+{
+    initialise();
+    
+    while (g_app_status == RUNNING)
+    {
+        process_input();
+        update();
+        render();
     }
     
-    void shutdown() { SDL_Quit(); }
-    
-    
-    int main(int argc, char* argv[])
-    {
-        initialise();
-        
-        while (g_app_status == RUNNING)
-        {
-            process_input();
-            update();
-            render();
-        }
-        
-        shutdown();
-        return 0;
-    }
+    shutdown();
+    return 0;
+}

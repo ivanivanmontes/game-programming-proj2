@@ -76,7 +76,7 @@
 				6D504F622D6BEA1C00D9FF01 /* ball.png */,
 				6D504F5F2D6BCF1500D9FF01 /* rui.png */,
 				6D504F5E2D6BCF1500D9FF01 /* totsuko.png */,
-				DBDF1B512323DE3F007CECB1 /* SDLProject */,
+				DBDF1B512323DE3F007CECB1 /* irm4019_proj2 */,
 				DBDF1B502323DE3F007CECB1 /* Products */,
 				DBDF1B5F2323DE92007CECB1 /* Frameworks */,
 			);
@@ -90,7 +90,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DBDF1B512323DE3F007CECB1 /* SDLProject */ = {
+		DBDF1B512323DE3F007CECB1 /* irm4019_proj2 */ = {
 			isa = PBXGroup;
 			children = (
 				DBDF1B5B2323DE8D007CECB1 /* glm */,
@@ -100,7 +100,7 @@
 				DBDF1B5A2323DE8D007CECB1 /* stb_image.h */,
 				DBDF1B522323DE3F007CECB1 /* main.cpp */,
 			);
-			path = SDLProject;
+			path = irm4019_proj2;
 			sourceTree = "<group>";
 		};
 		DBDF1B5F2323DE92007CECB1 /* Frameworks */ = {
@@ -149,7 +149,7 @@
 					};
 				};
 			};
-			buildConfigurationList = DBDF1B4A2323DE3F007CECB1 /* Build configuration list for PBXProject "SDLProject" */;
+			buildConfigurationList = DBDF1B4A2323DE3F007CECB1 /* Build configuration list for PBXProject "irm4019_proj2" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -337,7 +337,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DBDF1B4A2323DE3F007CECB1 /* Build configuration list for PBXProject "SDLProject" */ = {
+		DBDF1B4A2323DE3F007CECB1 /* Build configuration list for PBXProject "irm4019_proj2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBDF1B542323DE3F007CECB1 /* Debug */,
