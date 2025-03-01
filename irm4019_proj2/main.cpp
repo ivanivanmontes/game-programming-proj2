@@ -62,7 +62,6 @@ g_model_matrix3,
 g_projection_matrix;
 
 float g_previous_ticks = 0.0f;
-float g_triangle_x = 0.0f;
 
 bool is_one_player = false;
 bool go_down = false;
@@ -126,6 +125,9 @@ GLuint load_texture(const char* filepath)
     
     return textureID;
 }
+
+constexpr int FONTBANK_SIZE = 16;
+
 
 
 void initialise()
@@ -269,23 +271,21 @@ void update()
     float delta_time = ticks - g_previous_ticks;
     g_previous_ticks = ticks;
     
-    g_triangle_x += 1.5f * delta_time;
-    
     g_paddle_position += g_paddle_movement * 8.0f * delta_time;
     g_paddle2_position += g_paddle2_movement * 8.0f * delta_time;
-    g_ball_position.x -= 0.5f * delta_time;
+    g_ball_position.x -= 1.5f * delta_time;
     
     
     
     g_model_matrix3 = glm::mat4(1.0f);
     
-    if (g_paddle_position.y < 3.1 && g_paddle_position.y > -3.1) {
+    if (g_paddle_position.y < 3.1f && g_paddle_position.y > -3.1f) {
         g_model_matrix1 = glm::mat4(1.0f);
         g_model_matrix1 = glm::translate(g_model_matrix1, g_paddle_position);
         g_model_matrix1 = glm::scale(g_model_matrix1, INIT_SCALE_PADDLE);
     }
     
-    if (g_paddle2_position.y < 3.1 && g_paddle2_position.y > -3.1) {
+    if (g_paddle2_position.y < 3.1f && g_paddle2_position.y > -3.1f) {
         
         g_model_matrix2 = glm::mat4(1.0f);
         g_model_matrix2 = glm::scale(g_model_matrix2, INIT_SCALE_PADDLE2);
@@ -301,12 +301,16 @@ void update()
     }
     else {
         if (is_one_player) {
-            go_down = (g_paddle_position.y >= 3.1 ? true : false);
+            go_down = (g_paddle_position.y >= 3.1f ? true : false);
             g_model_matrix2 = glm::mat4(1.0f);
             g_model_matrix2 = glm::scale(g_model_matrix2, INIT_SCALE_PADDLE2);
             g_paddle2_position.y +=  -3.0f * delta_time;
             g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position.x, g_paddle2_position.y, 0.0f));
         }
+    }
+    /// requirement 4: game end stop game
+    if (g_ball_position.x < -10.0f || g_ball_position.x > 10.0f) {
+        g_app_status = TERMINATED;
     }
     
     
