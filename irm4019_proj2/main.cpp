@@ -65,27 +65,32 @@ float g_previous_ticks = 0.0f;
 float g_triangle_x = 0.0f;
 
 bool is_one_player = false;
+bool go_down = false;
 
 
 
 
 
 // Start at 0, 0, 0
-glm::vec3 g_paddle_position = glm::vec3(-3.0f, 0, 0);
+glm::vec3 g_paddle_position = glm::vec3(-3.0f, 0.0f, 0.0f);
 
 // Don't go anywhere (yet)
 glm::vec3 g_paddle_movement = glm::vec3(0, 0, 0);
 
 // Start at 0, 0, 0
-glm::vec3 g_paddle2_position = glm::vec3(3.0f, 0, 0);
+glm::vec3 g_paddle2_position = glm::vec3(3.0f, 0.0f, 0.0f);
 
 // Don't go anywhere (yet)
 glm::vec3 g_paddle2_movement = glm::vec3(0, 0, 0);
 
+glm::vec3 g_ball_position = glm::vec3(0.0f, 0.0f, 0.0f);
+
 constexpr glm::vec3 INIT_SCALE_BALL = glm::vec3(0.5f, 0.5f, 0.0f),
 INIT_POS_BALL = glm::vec3(0.0f, 0.0f, 0.0f),
-INIT_POS_PADDLE  = glm::vec3(3.0f, 0.0f, 0.0f),
-INIT_POS_PADDLE2   = glm::vec3(-3.0f, 0.0f, 0.0f);
+INIT_SCALE_PADDLE = glm::vec3(1.0f, 1.0f, 1.0f),
+INIT_SCALE_PADDLE2 = glm::vec3(1.0f, 1.0f, 1.0f),
+INIT_POS_PADDLE  = glm::vec3(-3.0f, 0.0f, 0.0f),
+INIT_POS_PADDLE2   = glm::vec3(3.0f, 0.0f, 0.0f);
 
 
 
@@ -268,25 +273,72 @@ void update()
     
     g_paddle_position += g_paddle_movement * 8.0f * delta_time;
     g_paddle2_position += g_paddle2_movement * 8.0f * delta_time;
+    g_ball_position.x -= 0.5f * delta_time;
     
-    g_model_matrix1 = glm::mat4(1.0f);
-    g_model_matrix2 = glm::mat4(1.0f);
+    
+    
     g_model_matrix3 = glm::mat4(1.0f);
     
-    g_model_matrix1 = glm::translate(g_model_matrix1, g_paddle_position);
+    if (g_paddle_position.y < 3.1 && g_paddle_position.y > -3.1) {
+        g_model_matrix1 = glm::mat4(1.0f);
+        g_model_matrix1 = glm::translate(g_model_matrix1, g_paddle_position);
+        g_model_matrix1 = glm::scale(g_model_matrix1, INIT_SCALE_PADDLE);
+    }
+    
+    if (g_paddle2_position.y < 3.1 && g_paddle2_position.y > -3.1) {
+        
+        g_model_matrix2 = glm::mat4(1.0f);
+        g_model_matrix2 = glm::scale(g_model_matrix2, INIT_SCALE_PADDLE2);
+        if (!is_one_player) { /// if we are two players
+            g_model_matrix2 = glm::translate(g_model_matrix2, g_paddle2_position);
+        }
+        else { /// if we are just one player
+            
+            g_paddle2_position.y +=  (go_down ? -3.0f : 3.0f) * delta_time;
+            g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position.x, g_paddle2_position.y, 0.0f));
+            
+        }
+    }
+    else {
+        if (is_one_player) {
+            go_down = (g_paddle_position.y >= 3.1 ? true : false);
+            g_model_matrix2 = glm::mat4(1.0f);
+            g_model_matrix2 = glm::scale(g_model_matrix2, INIT_SCALE_PADDLE2);
+            g_paddle2_position.y +=  -3.0f * delta_time;
+            g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position.x, g_paddle2_position.y, 0.0f));
+        }
+    }
+    
     
     g_model_matrix3  = glm::scale(g_model_matrix3, INIT_SCALE_BALL);
+    g_model_matrix3 = glm::translate(g_model_matrix3, glm::vec3(g_ball_position.x, 0.0f, 0.0f));
     
-    g_model_matrix3 = glm::translate(g_model_matrix3, glm::vec3(-g_triangle_x, 0.0f, 0.0f));
     
-    if (!is_one_player) { /// if we are two players
-        g_model_matrix2 = glm::translate(g_model_matrix2, g_paddle2_position);
-    }
-    else { /// if we are just one player
-        g_paddle2_position.y +=  2.0f * delta_time;
-        g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position.x, g_paddle2_position.y, 0.0f));
-        
-    }
+    
+    
+    
+    
+//    float x_distance = fabs(g_paddle_position.x  - g_ball_position.x) -
+//    ((INIT_SCALE_PADDLE.x + INIT_SCALE_BALL.x) / 2.0f);
+//    
+//    float y_distance = fabs(g_paddle_position.y  - g_ball_position.y)  -
+//    ((INIT_SCALE_PADDLE.y + INIT_POS_BALL.y) / 2.0f);
+    
+//    float pad_ceil_y = fabs(g_paddle_position.x - )
+    
+    
+    
+    // Print distances before checking for collision
+        std::cout << std::time(nullptr) << ": x_distance = "
+    << std::fixed << std::setprecision(4) << g_ball_position.x
+    << ", y_distance = " << g_paddle_position.y - g_ball_position.y << "\n";
+//    if (x_distance < 0.0f && y_distance < 0.0f)
+//        {
+//            std::cout << std::time(nullptr) << ": Collision.\n";
+//        }
+    
+    
+    
     
     
     
