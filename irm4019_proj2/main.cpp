@@ -82,9 +82,9 @@ glm::vec3 g_paddle2_position = glm::vec3(3.0f, 0.0f, 0.0f);
 // Don't go anywhere (yet)
 glm::vec3 g_paddle2_movement = glm::vec3(0, 0, 0);
 
-glm::vec3 g_ball_position = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 g_ball_position = glm::vec3(2.0f, 0.0f, 0.0f);
 
-constexpr glm::vec3 INIT_SCALE_BALL = glm::vec3(0.5f, 0.5f, 0.0f),
+constexpr glm::vec3 INIT_SCALE_BALL = glm::vec3(1.0f, 1.0f, 1.0f),
 INIT_POS_BALL = glm::vec3(0.0f, 0.0f, 0.0f),
 INIT_SCALE_PADDLE = glm::vec3(1.0f, 1.0f, 1.0f),
 INIT_SCALE_PADDLE2 = glm::vec3(1.0f, 1.0f, 1.0f),
@@ -158,14 +158,14 @@ void initialise()
     
     g_shader_program.load(V_SHADER_PATH, F_SHADER_PATH);
     
-    g_model_matrix1 = glm::mat4(1.0f);
-    g_model_matrix1 = glm::translate(g_model_matrix1, glm::vec3(-3.0f, 0.0f, 0.0f));
-    
-    g_model_matrix2 = glm::mat4(1.0f);
-    g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(3.0f, 0.0f, 0.0f));
-    
-    g_model_matrix3 = glm::mat4(1.0f);
-    g_model_matrix3 = glm::translate(g_model_matrix1, glm::vec3(0.0f, 0.0f, 0.0f));
+//    g_model_matrix1 = glm::mat4(1.0f);
+//    g_model_matrix1 = glm::translate(g_model_matrix1, glm::vec3(-3.0f, 0.0f, 0.0f));
+//    
+//    g_model_matrix2 = glm::mat4(1.0f);
+//    g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(3.0f, 0.0f, 0.0f));
+//    
+//    g_model_matrix3 = glm::mat4(1.0f);
+//    g_model_matrix3 = glm::translate(g_model_matrix1, glm::vec3(0.0f, 0.0f, 0.0f));
     
     g_view_matrix       = glm::mat4(1.0f);
     g_projection_matrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
@@ -185,6 +185,20 @@ void initialise()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
+
+bool check_collision(glm::vec3 ball_pos, glm::vec3 paddle_pos, glm::vec3 ball_size, glm::vec3 paddle_size) {
+    float X_diff = fabs(ball_pos.x - paddle_pos.x);
+    float Y_diff = fabs(ball_pos.y - paddle_pos.y);
+
+    float X_distance = X_diff - ((ball_size.x + paddle_size.x) / 2.0f);
+    float Y_distance = Y_diff - ((ball_size.y + paddle_size.y) / 2.0f);
+//    std::cout << "Ball size: " << ball_size.x << ", Paddle size: " << paddle_size.x << ", X_diff: " << X_diff << ", X_distance: " << X_distance << "\n";
+//    std::cout << "Ball X: " << ball_pos.x << ", Paddle X: " << paddle_pos.x << ", X_diff: " << X_diff << ", X_distance: " << X_distance << "\n";
+
+
+    return (X_distance < 0 && Y_distance < 0);
+}
+
 
 
 void process_input()
@@ -322,24 +336,20 @@ void update()
     
     
     
-//    float x_distance = fabs(g_paddle_position.x  - g_ball_position.x) -
-//    ((INIT_SCALE_PADDLE.x + INIT_SCALE_BALL.x) / 2.0f);
-//    
-//    float y_distance = fabs(g_paddle_position.y  - g_ball_position.y)  -
-//    ((INIT_SCALE_PADDLE.y + INIT_POS_BALL.y) / 2.0f);
+    /// if colliding with left paddle
+    if (check_collision(g_ball_position, g_paddle_position, INIT_SCALE_BALL, INIT_SCALE_PADDLE)) {
+        std::cout << std::time(nullptr) << ": Paddle Position: (" << g_paddle_position.x << ", " << g_paddle_position.y << ")\n";
+        std::cout << std::time(nullptr) << ": Ball Position: (" << g_ball_position.x << ", " << g_ball_position.y << ")\n";
+        
+    }
     
-//    float pad_ceil_y = fabs(g_paddle_position.x - )
-    
-    
-    
-    // Print distances before checking for collision
-        std::cout << std::time(nullptr) << ": x_distance = "
-    << std::fixed << std::setprecision(4) << g_ball_position.x
-    << ", y_distance = " << g_paddle_position.y - g_ball_position.y << "\n";
-//    if (x_distance < 0.0f && y_distance < 0.0f)
-//        {
-//            std::cout << std::time(nullptr) << ": Collision.\n";
-//        }
+    /// if colliding with right paddle
+    if (check_collision(g_ball_position, g_paddle2_position, INIT_SCALE_BALL, INIT_SCALE_PADDLE2)) {
+        std::cout << std::time(nullptr) << ": Paddle Position: (" << g_paddle2_position.x << ", " << g_paddle2_position.y << ")\n";
+        std::cout << std::time(nullptr) << ": Ball Position: (" << g_ball_position.x << ", " << g_ball_position.y << ")\n";
+        
+    }
+
     
     
     
