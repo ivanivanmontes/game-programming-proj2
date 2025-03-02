@@ -84,6 +84,8 @@ glm::vec3 g_paddle2_movement = glm::vec3(0, 0, 0);
 
 glm::vec3 g_ball_position = glm::vec3(2.0f, 0.0f, 0.0f);
 
+glm::vec3 g_ball_movement = glm::vec3(-1.5f, 0.0f, 0.0f);
+
 constexpr glm::vec3 INIT_SCALE_BALL = glm::vec3(1.0f, 1.0f, 1.0f),
 INIT_POS_BALL = glm::vec3(0.0f, 0.0f, 0.0f),
 INIT_SCALE_PADDLE = glm::vec3(1.0f, 1.0f, 1.0f),
@@ -187,15 +189,10 @@ void initialise()
 }
 
 bool check_collision(glm::vec3 ball_pos, glm::vec3 paddle_pos, glm::vec3 ball_size, glm::vec3 paddle_size) {
-    float X_diff = fabs(ball_pos.x - paddle_pos.x);
-    float Y_diff = fabs(ball_pos.y - paddle_pos.y);
-
-    float X_distance = X_diff - ((ball_size.x + paddle_size.x) / 2.0f);
-    float Y_distance = Y_diff - ((ball_size.y + paddle_size.y) / 2.0f);
-//    std::cout << "Ball size: " << ball_size.x << ", Paddle size: " << paddle_size.x << ", X_diff: " << X_diff << ", X_distance: " << X_distance << "\n";
-//    std::cout << "Ball X: " << ball_pos.x << ", Paddle X: " << paddle_pos.x << ", X_diff: " << X_diff << ", X_distance: " << X_distance << "\n";
-
-
+    float X_diff = fabs(paddle_pos.x - ball_pos.x);
+    float Y_diff = fabs(paddle_pos.y - ball_pos.y);
+    float X_distance = X_diff - ((paddle_size.x + ball_size.x) / 2.0f);
+    float Y_distance = Y_diff - ((paddle_size.y + ball_size.y) / 2.0f);
     return (X_distance < 0 && Y_distance < 0);
 }
 
@@ -204,6 +201,7 @@ bool check_collision(glm::vec3 ball_pos, glm::vec3 paddle_pos, glm::vec3 ball_si
 void process_input()
 {
     g_paddle_movement = glm::vec3(0.0f);
+    g_paddle2_movement = glm::vec3(0.0f);
     if (!is_one_player) {
         g_paddle2_movement = glm::vec3(0.0f);
     }
@@ -223,9 +221,6 @@ void process_input()
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
                 {
-                    case SDLK_LEFT:
-                        break;
-                        
                     case SDLK_w:
                         g_paddle_movement.y = 1.0f;
                         break;
@@ -249,12 +244,9 @@ void process_input()
                         
                     case SDLK_t:
                         is_one_player = !is_one_player;
-                        std::cout << std::time(nullptr) << ": switching gamemode: "
-                        << std::boolalpha << is_one_player << ".\n";
                         break;
                         
                     case SDLK_q:
-                        // Quit the game with a keystroke
                         g_app_status = TERMINATED;
                         break;
                     
@@ -287,19 +279,15 @@ void update()
     
     g_paddle_position += g_paddle_movement * 8.0f * delta_time;
     g_paddle2_position += g_paddle2_movement * 8.0f * delta_time;
-    g_ball_position.x -= 1.5f * delta_time;
+    g_ball_position += g_ball_movement * delta_time;
     
-    
-    
-    g_model_matrix3 = glm::mat4(1.0f);
-    
-    if (g_paddle_position.y < 3.1f && g_paddle_position.y > -3.1f) {
+    if (g_paddle_position.y < 3.1f && g_paddle_position.y > -3.1f) { // if in bounds
         g_model_matrix1 = glm::mat4(1.0f);
         g_model_matrix1 = glm::translate(g_model_matrix1, g_paddle_position);
         g_model_matrix1 = glm::scale(g_model_matrix1, INIT_SCALE_PADDLE);
     }
     
-    if (g_paddle2_position.y < 3.1f && g_paddle2_position.y > -3.1f) {
+    if (g_paddle2_position.y < 3.1f && g_paddle2_position.y > -3.1f) { // if in bounds
         
         g_model_matrix2 = glm::mat4(1.0f);
         g_model_matrix2 = glm::scale(g_model_matrix2, INIT_SCALE_PADDLE2);
@@ -307,51 +295,45 @@ void update()
             g_model_matrix2 = glm::translate(g_model_matrix2, g_paddle2_position);
         }
         else { /// if we are just one player
-            
             g_paddle2_position.y +=  (go_down ? -3.0f : 3.0f) * delta_time;
-            g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position.x, g_paddle2_position.y, 0.0f));
+            g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position));
             
         }
     }
     else {
-        if (is_one_player) {
-            go_down = (g_paddle_position.y >= 3.1f ? true : false);
+        if (is_one_player) { // bounce off
+            go_down = (g_paddle2_position.y >= 3.1f ? true : false);
             g_model_matrix2 = glm::mat4(1.0f);
             g_model_matrix2 = glm::scale(g_model_matrix2, INIT_SCALE_PADDLE2);
-            g_paddle2_position.y +=  -3.0f * delta_time;
+            g_paddle2_position.y +=  (go_down ? -3.0f : 3.0f) * delta_time;
             g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(g_paddle2_position.x, g_paddle2_position.y, 0.0f));
         }
     }
-    /// requirement 4: game end stop game
-    if (g_ball_position.x < -10.0f || g_ball_position.x > 10.0f) {
+    /// requirement 4: game over
+    if (g_ball_position.x < -6.0f || g_ball_position.x > 6.0f) {
         g_app_status = TERMINATED;
     }
     
-    
+    g_model_matrix3 = glm::mat4(1.0f);
     g_model_matrix3  = glm::scale(g_model_matrix3, INIT_SCALE_BALL);
-    g_model_matrix3 = glm::translate(g_model_matrix3, glm::vec3(g_ball_position.x, 0.0f, 0.0f));
-    
-    
-    
-    
-    
-    
+    g_model_matrix3 = glm::translate(g_model_matrix3, glm::vec3(g_ball_position));
+        
     /// if colliding with left paddle
     if (check_collision(g_ball_position, g_paddle_position, INIT_SCALE_BALL, INIT_SCALE_PADDLE)) {
-        std::cout << std::time(nullptr) << ": Paddle Position: (" << g_paddle_position.x << ", " << g_paddle_position.y << ")\n";
-        std::cout << std::time(nullptr) << ": Ball Position: (" << g_ball_position.x << ", " << g_ball_position.y << ")\n";
-        
+        g_ball_movement.x = fabs(g_ball_movement.x);
+        g_ball_movement.y = (g_ball_position.y - g_paddle_position.y ) * 1.5f;
     }
     
     /// if colliding with right paddle
     if (check_collision(g_ball_position, g_paddle2_position, INIT_SCALE_BALL, INIT_SCALE_PADDLE2)) {
-        std::cout << std::time(nullptr) << ": Paddle Position: (" << g_paddle2_position.x << ", " << g_paddle2_position.y << ")\n";
-        std::cout << std::time(nullptr) << ": Ball Position: (" << g_ball_position.x << ", " << g_ball_position.y << ")\n";
-        
+        g_ball_movement.x = -fabs(g_ball_movement.x);
+        g_ball_movement.y = (g_ball_position.y - g_paddle2_position.y) * 1.5f;
     }
-
     
-    
+    /// requirement 3: bounce off walls
+    if (g_ball_position.y + (INIT_SCALE_BALL.y / 2) >= 3.75f || g_ball_position.y - (INIT_SCALE_BALL.y / 2) <= -3.75f) {
+        g_ball_movement.y = -g_ball_movement.y;
+    }
     
     
     
