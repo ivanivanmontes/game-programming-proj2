@@ -66,24 +66,13 @@ float g_previous_ticks = 0.0f;
 bool is_one_player = false;
 bool go_down = false;
 
-
-
-
-
-// Start at 0, 0, 0
 glm::vec3 g_paddle_position = glm::vec3(-3.0f, 0.0f, 0.0f);
-
-// Don't go anywhere (yet)
 glm::vec3 g_paddle_movement = glm::vec3(0, 0, 0);
 
-// Start at 0, 0, 0
 glm::vec3 g_paddle2_position = glm::vec3(3.0f, 0.0f, 0.0f);
-
-// Don't go anywhere (yet)
 glm::vec3 g_paddle2_movement = glm::vec3(0, 0, 0);
 
 glm::vec3 g_ball_position = glm::vec3(2.0f, 0.0f, 0.0f);
-
 glm::vec3 g_ball_movement = glm::vec3(-1.5f, 0.0f, 0.0f);
 
 constexpr glm::vec3 INIT_SCALE_BALL = glm::vec3(1.0f, 1.0f, 1.0f),
@@ -159,15 +148,6 @@ void initialise()
     glViewport(VIEWPORT_X, VIEWPORT_Y, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
     
     g_shader_program.load(V_SHADER_PATH, F_SHADER_PATH);
-    
-//    g_model_matrix1 = glm::mat4(1.0f);
-//    g_model_matrix1 = glm::translate(g_model_matrix1, glm::vec3(-3.0f, 0.0f, 0.0f));
-//    
-//    g_model_matrix2 = glm::mat4(1.0f);
-//    g_model_matrix2 = glm::translate(g_model_matrix2, glm::vec3(3.0f, 0.0f, 0.0f));
-//    
-//    g_model_matrix3 = glm::mat4(1.0f);
-//    g_model_matrix3 = glm::translate(g_model_matrix1, glm::vec3(0.0f, 0.0f, 0.0f));
     
     g_view_matrix       = glm::mat4(1.0f);
     g_projection_matrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
